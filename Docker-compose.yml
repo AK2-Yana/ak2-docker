@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  ak2_postgres:
+    build:
+      context: ./ak2_postgre
+      dockerfile: DockerFile
+    volumes:
+      - ../ak2_db/ak2AllTables.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "13306:3306"
+    privileged: true
+  ak2_front:
+    build:
+      context: ./ak2_front
+      dockerfile: DockerFile
+    image: ak2_front
+    ports:
+      - 40080:80
+      - 40443:443
+    volumes:
+      - ./ak2_front/keys:/etc/ssl-key:ro
+      - ./ak2_front/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./ak2_front/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
+      - ./ak2_front/logs:/usr/local/apache2/logs
+      - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
+    environment:
+      - TZ=Asia/Tokyo
+    privileged: true
+  squid:
+    build:
+      context: ./squid
+      dockerfile: DockerFile
+      args:
+        BASE_IMAGE: "ubuntu/squid:latest"
+    platform: linux/amd64
+    ports:
+      - "13128:3128"
+    volumes:
+      - ./squid/conf:/etc/squid:ro
+    privileged: true
+    links:
+      - ak2_front:ak2.prod.jp.local
