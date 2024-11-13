@@ -1,0 +1,18 @@
+port ${PORT}
+dir /data/${PORT}
+
+daemonize yesf
+pidfile redis.pid
+
+appendonly yes
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+
+# To access from the host machine
+bind 0.0.0.0
+
+# Return this IP to announce to clients
+# otherwise it uses an IP inside docker
+# and it is unreachable from the host machine
+cluster-announce-ip 127.0.0.1

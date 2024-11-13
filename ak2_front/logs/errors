@@ -137,3 +137,8 @@ AH00016: Configuration Failed
 [Mon May 27 22:44:03.693386 2024] [mpm_event:notice] [pid 1:tid 140184429037440] AH00489: Apache/2.4.59 (Unix) OpenSSL/3.0.11 configured -- resuming normal operations
 [Mon May 27 22:44:03.694694 2024] [core:notice] [pid 1:tid 140184429037440] AH00094: Command line: 'httpd -D FOREGROUND'
 [Mon May 27 23:05:40.072465 2024] [mpm_event:notice] [pid 1:tid 140184429037440] AH00492: caught SIGWINCH, shutting down gracefully
+[Sun Sep 22 15:32:36.599123 2024] [ssl:warn] [pid 1:tid 1] AH01909: ak2.prod.jp.local:443:0 server certificate does NOT include an ID which matches the server name
+[Sun Sep 22 15:32:36.656239 2024] [ssl:warn] [pid 1:tid 1] AH01909: ak2.prod.jp.local:443:0 server certificate does NOT include an ID which matches the server name
+[Sun Sep 22 15:32:36.667824 2024] [mpm_event:notice] [pid 1:tid 1] AH00489: Apache/2.4.62 (Unix) OpenSSL/3.0.14 configured -- resuming normal operations
+[Sun Sep 22 15:32:36.669087 2024] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sun Sep 22 15:32:55.185537 2024] [mpm_event:notice] [pid 1:tid 1] AH00492: caught SIGWINCH, shutting down gracefully
