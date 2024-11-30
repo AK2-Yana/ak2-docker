@@ -1,7 +1,7 @@
 port ${PORT}
 dir /data/${PORT}
 
-daemonize yesf
+daemonize yes
 pidfile redis.pid
 
 appendonly yes

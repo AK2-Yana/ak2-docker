@@ -6,13 +6,12 @@ services:
     volumes:
       - ../ak2_db/ak2AllTables.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "13306:3306"
+      - "13306:5432"
     privileged: true
   ak2_front:
-    build:
+    build: 
       context: ./ak2_front
       dockerfile: DockerFile
-    image: ak2_front
     ports:
       - 40080:80
       - 40443:443
@@ -39,3 +38,12 @@ services:
     privileged: true
     links:
       - ak2_front:ak2.prod.jp.local
+  redis:
+    build: 
+      context: ./redis
+      dockerfile: DockerFile
+    command: /bin/bash /conf/cluster-builder.sh
+    ports:
+      - 7001-7006:7001-7006
+    volumes:
+      - ./redis/conf:/conf

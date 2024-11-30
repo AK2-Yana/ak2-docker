@@ -1,0 +1,1 @@
+psql -h 127.0.0.1 -p 13306 -U akito -d akidb -f ./data.sql
