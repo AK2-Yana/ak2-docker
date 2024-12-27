@@ -24,6 +24,24 @@ services:
     environment:
       - TZ=Asia/Tokyo
     privileged: true
+  ak2_static:
+    build:
+      context: ./ak2_static
+      dockerfile: DockerFile
+    image: ak2_static
+    ports:
+      - 11080:80
+      - 11443:443
+    volumes:
+      - ./ak2_static/keys:/etc/ssl-key:ro
+      - ./ak2_static/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./ak2_static/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
+      - ./ak2_static/logs:/usr/local/apache2/logs
+      - ./ak2_static:/usr/local/apache2/htdocs
+      - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
+    environment:
+      - TZ=Asia/Tokyo
+    privileged: true
   squid:
     build:
       context: ./squid
@@ -38,6 +56,7 @@ services:
     privileged: true
     links:
       - ak2_front:ak2.prod.jp.local
+      - ak2_static:ak2.styles.jp.local
   redis:
     build: 
       context: ./redis
