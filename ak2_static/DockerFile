@@ -1,0 +1,14 @@
+FROM httpd:2.4
+
+#Timezone
+RUN echo "${TZ}" > /etc/timezone \
+    && dpkg-reconfigure -f noninteractive tzdata
+
+# install openssl
+RUN apt-get update && apt-get install -y \
+    openssl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# listen port
+EXPOSE 80 443

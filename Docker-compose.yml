@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   ak2_postgres:
     build:
@@ -7,13 +6,12 @@ services:
     volumes:
       - ../ak2_db/ak2AllTables.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "13306:3306"
+      - "13306:5432"
     privileged: true
   ak2_front:
-    build:
+    build: 
       context: ./ak2_front
       dockerfile: DockerFile
-    image: ak2_front
     ports:
       - 40080:80
       - 40443:443
@@ -22,6 +20,24 @@ services:
       - ./ak2_front/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
       - ./ak2_front/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
       - ./ak2_front/logs:/usr/local/apache2/logs
+      - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
+    environment:
+      - TZ=Asia/Tokyo
+    privileged: true
+  ak2_static:
+    build:
+      context: ./ak2_static
+      dockerfile: DockerFile
+    image: ak2_static
+    ports:
+      - 11080:80
+      - 11443:443
+    volumes:
+      - ./ak2_static/keys:/etc/ssl-key:ro
+      - ./ak2_static/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./ak2_static/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
+      - ./ak2_static/logs:/usr/local/apache2/logs
+      - ./ak2_static:/usr/local/apache2/htdocs
       - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
     environment:
       - TZ=Asia/Tokyo
@@ -40,3 +56,13 @@ services:
     privileged: true
     links:
       - ak2_front:ak2.prod.jp.local
+      - ak2_static:ak2.styles.jp.local
+  redis:
+    build: 
+      context: ./redis
+      dockerfile: DockerFile
+    command: /bin/bash /conf/cluster-builder.sh
+    ports:
+      - 7001-7006:7001-7006
+    volumes:
+      - ./redis/conf:/conf
