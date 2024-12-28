@@ -8,6 +8,22 @@ services:
     ports:
       - "13306:5432"
     privileged: true
+  ak2_front_apache:
+    build: 
+      context: ./ak2_front_apache
+      dockerfile: DockerFile
+    ports:
+      - 40081:80
+      - 40444:443
+    volumes:
+      - ./ak2_front_apache/keys:/etc/ssl-key:ro
+      - ./ak2_front_apache/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
+      - ./ak2_front_apache/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
+      - ./ak2_front_apache/logs:/usr/local/apache2/logs
+      - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
+    environment:
+      - TZ=Asia/Tokyo
+    privileged: true
   ak2_front:
     build: 
       context: ./ak2_front
@@ -16,11 +32,9 @@ services:
       - 40080:80
       - 40443:443
     volumes:
-      - ./ak2_front/keys:/etc/ssl-key:ro
-      - ./ak2_front/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
-      - ./ak2_front/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
-      - ./ak2_front/logs:/usr/local/apache2/logs
-      - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
+      - ./ak2_front/keys/server.pem:/etc/nginx/ssl/server.pem:ro
+      - ./ak2_front/keys/server.key:/etc/nginx/ssl/server.key:ro
+      - ./ak2_front/conf/nginx.conf:/etc/nginx/conf.d/default.conf
     environment:
       - TZ=Asia/Tokyo
     privileged: true
@@ -28,17 +42,13 @@ services:
     build:
       context: ./ak2_static
       dockerfile: DockerFile
-    image: ak2_static
     ports:
       - 11080:80
       - 11443:443
     volumes:
-      - ./ak2_static/keys:/etc/ssl-key:ro
-      - ./ak2_static/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro
-      - ./ak2_static/conf/httpd-ssl.conf:/usr/local/apache2/conf/extra/httpd-ssl.conf:ro
-      - ./ak2_static/logs:/usr/local/apache2/logs
-      - ./ak2_static:/usr/local/apache2/htdocs
-      - ../ak2-server-conf/ak2-front/front.ak2_proxy.conf:/etc/custom/conf/proxypass.conf
+      - ./ak2_static/keys/server.pem:/etc/nginx/ssl/server.pem:ro
+      - ./ak2_static/keys/server.key:/etc/nginx/ssl/server.key:ro
+      - ./ak2_static/conf/nginx.conf:/etc/nginx/conf.d/default.conf
     environment:
       - TZ=Asia/Tokyo
     privileged: true
